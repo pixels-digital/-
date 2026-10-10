@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>التسجيل اليدوي للطلاب — منصة كيمياء عين شمس</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+Bhaijaan+2:wght@400;500;600;700;800&family=IBM+Plex+Sans+Arabic:wght@400;500;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/exceljs/4.4.0/exceljs.min.js"></script>
+<style>
+:root{--g1:#0f5a3c;--g2:#2fb67c;--g3:#3dcc8f;--lime:#7ed957;--ink:#14213d;--mut:#5f7a6c;--bg:#f2faf6;--line:#dcebe2;--red:#d6453a;--gold:#e6b422;--pink:#e0558f;--blue:#2a7de1;--sh:0 2px 4px rgba(15,90,60,.06),0 14px 34px rgba(15,90,60,.10)}
+*{box-sizing:border-box;margin:0}
+body{font-family:'Baloo Bhaijaan 2','IBM Plex Sans Arabic',system-ui,sans-serif;font-weight:500;line-height:1.6;color:var(--ink);min-height:100vh;
+background:var(--bg) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='104'%3E%3Cpath d='M30 4l26 15v30L30 64 4 49V19z M56 49l26 15v30' fill='none' stroke='%233dcc8f' stroke-opacity='.12'/%3E%3Ccircle cx='82' cy='64' r='3' fill='%230f5a3c' fill-opacity='.12'/%3E%3C/svg%3E")}
+h1,h2,h3,.puff{font-weight:800}
+.puff{text-shadow:0 2px 0 rgba(255,255,255,.75),0 6px 14px rgba(15,90,60,.22)}
+button,input{font:inherit}
+.av{width:100%;height:100%;display:block;border-radius:50%}
+
+/* login */
+#login{min-height:100vh;display:grid;place-items:center;padding:16px;background:linear-gradient(160deg,#e6f7ee,#d7f1e3)}
+.lcard{width:100%;max-width:400px;background:#fff;border-radius:32px;padding:30px 24px;box-shadow:var(--sh);text-align:center}
+.lcard svg.fl{width:84px;height:84px;margin-bottom:6px}
+.lcard h2{font-size:26px;color:var(--g1);margin-bottom:14px}
+.lcard input{width:100%;height:54px;border:2px solid var(--line);border-radius:18px;padding:0 16px;margin-bottom:10px;background:#fbfdfc;color:var(--ink);outline:0}
+.lcard input:focus,.nbox input:focus{border-color:var(--g3);box-shadow:0 0 0 5px rgba(47,182,124,.15)}
+
+/* layout */
+#app{display:none;min-height:100vh;grid-template-columns:290px 1fr}#app.on{display:grid}
+aside{position:sticky;top:0;height:100vh;background:linear-gradient(180deg,#04241a,#0b4a33);color:#fff;padding:22px 16px;display:flex;flex-direction:column;gap:14px;overflow:hidden}
+.brand{display:flex;align-items:center;gap:10px}.brand svg{width:50px;height:50px;flex:none}.brand b{display:block;font-size:22px;line-height:1.1;font-weight:800}.brand small{opacity:.75;font-size:13px}
+.nav{display:flex;flex-direction:column;gap:8px;margin-top:6px}
+.nav a{display:flex;align-items:center;gap:10px;padding:12px 16px;border-radius:16px;color:#d8efe4;text-decoration:none;font-weight:700;border:0;background:none;cursor:pointer;text-align:start;width:100%}
+.nav a.on{background:linear-gradient(135deg,var(--g1),var(--g2));color:#fff;box-shadow:0 6px 0 #073a27,0 12px 20px rgba(0,0,0,.25)}
+.nav a:not(.on):hover{background:rgba(255,255,255,.08)}
+.nav svg{width:20px;height:20px;stroke:currentColor;fill:none;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round;flex:none}
+.sst{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:6px}
+.sst div{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.14);border-radius:18px;padding:10px;text-align:center}
+.sst b{display:block;font-size:30px;line-height:1.1;font-weight:800;color:#d6f7c8}.sst span{font-size:12px;opacity:.8}
+.sst .w{grid-column:1/-1;background:linear-gradient(135deg,rgba(47,182,124,.35),rgba(126,217,87,.2))}
+.sst .bump b{animation:bump .5s}
+@keyframes bump{40%{transform:scale(1.35)}}
+.mol{position:absolute;inset-inline:0;bottom:70px;height:220px;opacity:.35;pointer-events:none}
+.foot{margin-top:auto;position:relative;font-size:12px;opacity:.85;display:flex;flex-direction:column;gap:8px}
+.foot .me{display:flex;align-items:center;gap:8px;word-break:break-all}
+.foot button{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);color:#fff;border-radius:12px;padding:6px 10px;cursor:pointer}
+
+main{padding:24px;width:100%;max-width:1000px;margin:auto;display:flex;flex-direction:column;gap:18px}
+.banner{position:relative;overflow:hidden;border-radius:30px;background:linear-gradient(120deg,#e8f8ef,#d3f0e1 55%,#c1ead6);padding:26px 28px;display:flex;align-items:center;justify-content:space-between;gap:12px;box-shadow:var(--sh);border:1px solid var(--line)}
+.banner h1{font-size:clamp(26px,4vw,38px);color:var(--g1);line-height:1.2}.banner p{color:var(--mut);margin-top:6px}
+.banner svg{width:150px;height:120px;flex:none}
+.card{background:#fff;border:1px solid var(--line);border-radius:28px;padding:22px;box-shadow:var(--sh)}
+.card h3{font-size:20px;color:var(--g1);margin-bottom:12px;display:flex;align-items:center;gap:8px}
+.nbox input{width:100%;height:78px;border:3px solid var(--line);border-radius:26px;padding:0 24px;font-size:clamp(22px,3.4vw,32px);font-weight:700;background:#fbfdfc;color:var(--ink);outline:0;transition:.2s}
+.nbox input.dup{border-color:var(--red);background:#fff4f2;box-shadow:0 0 0 6px rgba(214,69,58,.12)}
+.nbox input.good{border-color:var(--g2)}
+.shake{animation:shk .4s}@keyframes shk{20%,60%{transform:translateX(9px)}40%,80%{transform:translateX(-9px)}}
+.stl{min-height:30px;margin:8px 4px 4px;font-weight:700;font-size:15px;color:var(--mut);display:flex;align-items:center;gap:6px}
+.stl.bad{color:var(--red)}.stl.ok{color:var(--g1)}
+.gs{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:8px}
+.gb{display:flex;align-items:center;gap:14px;padding:12px 16px;border-radius:26px;border:3px solid var(--line);background:#fbfdfc;cursor:pointer;text-align:start;transition:.2s;color:var(--ink)}
+.gb .pic{width:74px;height:74px;flex:none;border-radius:50%;box-shadow:0 8px 16px rgba(0,0,0,.12)}
+.gb b{display:block;font-size:24px;font-weight:800;line-height:1.1}.gb small{color:var(--mut)}
+.gb:hover{transform:translateY(-2px)}
+.gb.m.on{border-color:var(--blue);background:#eaf3ff;box-shadow:0 0 0 6px rgba(42,125,225,.14),0 10px 0 -2px rgba(42,125,225,.2)}
+.gb.f.on{border-color:var(--pink);background:#ffeef6;box-shadow:0 0 0 6px rgba(224,85,143,.14),0 10px 0 -2px rgba(224,85,143,.2)}
+kbd{display:inline-grid;place-items:center;min-width:34px;height:34px;padding:0 8px;border-radius:10px;background:#fff;border:2px solid #cfe0d6;border-bottom-width:5px;font-weight:800;font-size:18px;color:var(--g1);font-family:inherit}
+.hints{display:flex;flex-wrap:wrap;gap:10px 18px;margin-top:14px;color:var(--mut);font-size:14px;align-items:center}.hints span{display:flex;gap:6px;align-items:center}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;height:60px;padding:0 28px;border:0;border-radius:22px;background:linear-gradient(135deg,var(--g1),var(--g2));color:#fff;font-weight:800;font-size:20px;cursor:pointer;box-shadow:0 6px 0 #073a27,0 14px 24px rgba(15,90,60,.3);transition:transform .12s,box-shadow .12s;text-shadow:0 2px 0 rgba(0,0,0,.18)}
+.btn:active{transform:translateY(5px);box-shadow:0 1px 0 #073a27}
+.btn.alt{background:#fff;color:var(--g1);box-shadow:0 5px 0 #cfe0d6;text-shadow:none;border:2px solid var(--line)}
+.btn.end{background:linear-gradient(135deg,#c0392b,#e0663a);box-shadow:0 6px 0 #7e1f16,0 14px 24px rgba(192,57,43,.3)}
+.btn svg{width:22px;height:22px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.acts{display:flex;gap:12px;flex-wrap:wrap;margin-top:16px}.acts .btn:first-child{flex:1;min-width:200px}
+
+.lh{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-bottom:10px}.lh h3{margin:0}
+.chip{font-size:13px;padding:3px 12px;border-radius:99px;background:#e8f8ef;color:var(--g1);font-weight:700}
+#list{max-height:52vh;overflow:auto;border:1px solid var(--line);border-radius:22px;scroll-behavior:smooth}
+.r{display:flex;align-items:center;gap:12px;padding:10px 14px;border-bottom:1px solid var(--line);background:#fff}
+.r:nth-child(even){background:#f7fbf9}.r:last-child{border:0}
+.r .n{width:34px;text-align:center;color:var(--mut);font-weight:800;flex:none}
+.r .p{width:46px;height:46px;flex:none;border-radius:50%;box-shadow:0 4px 10px rgba(0,0,0,.12)}
+.r .nm{flex:1;font-weight:700;font-size:18px;min-width:0;overflow-wrap:anywhere}
+.r .t{font-size:12px;color:var(--mut);flex:none}
+.tg{font-size:13px;font-weight:800;padding:3px 12px;border-radius:99px;flex:none}.tg.m{background:#e3eefb;color:#1d5fb0}.tg.f{background:#fbe8f1;color:#b03a6f}
+.r .x{border:0;background:#fdecea;color:var(--red);border-radius:12px;width:36px;height:36px;cursor:pointer;flex:none;font-size:18px;font-weight:800}
+.r.new{animation:rin .7s cubic-bezier(.2,.9,.3,1.3),flash 1.6s}
+@keyframes rin{from{opacity:0;transform:translateY(24px) scale(.96)}to{opacity:1;transform:none}}
+@keyframes flash{0%,40%{background:#d6f7c8}}
+.empty{padding:40px 16px;text-align:center;color:var(--mut)}
+
+/* toast + modal */
+#tw{position:fixed;top:14px;inset-inline:0;display:flex;flex-direction:column;align-items:center;gap:8px;z-index:100;pointer-events:none}
+.ts{pointer-events:auto;min-width:260px;max-width:92vw;background:#fff;border-radius:20px;padding:12px 18px;box-shadow:0 16px 40px rgba(15,90,60,.25);border-inline-start:7px solid var(--g2);animation:tin .4s cubic-bezier(.2,.9,.3,1.3)}
+.ts.err{border-color:var(--red)}.ts.warn{border-color:var(--gold)}.ts b{display:block;font-weight:800;color:var(--g1)}.ts span{font-size:14px;color:var(--mut)}
+@keyframes tin{from{opacity:0;transform:translateY(-30px) scale(.9)}}
+#md{position:fixed;inset:0;background:rgba(5,30,22,.55);display:none;place-items:center;z-index:90;padding:16px}#md.on{display:grid}
+.mb{width:100%;max-width:400px;background:#fff;border-radius:30px;padding:26px;text-align:center;animation:tin .35s}
+.mb h3{font-size:24px;color:var(--g1)}.mb p{color:var(--mut);margin:8px 0 18px}.mb .row{display:flex;gap:10px}.mb .btn{flex:1;height:52px;font-size:17px;padding:0 10px}
+
+@media(max-width:900px){
+ #app.on{display:block}aside{position:static;height:auto;flex-direction:row;flex-wrap:wrap;align-items:center;padding:12px 14px;gap:10px}
+ .nav,.mol{display:none}.sst{display:none}.foot{margin:0 0 0 auto;flex-direction:row;align-items:center}.foot .me{display:none}
+ main{padding:14px}.banner svg{display:none}.gs{grid-template-columns:1fr}.gb .pic{width:60px;height:60px}
+}
+</style></head><body>
+<svg style="display:none"><symbol id="fl" viewBox="0 0 64 64"><circle cx="32" cy="32" r="32" fill="#e8f8ef"/><path d="M26 10h12M28 10v16L16 50a4 4 0 0 0 3.600 6h24.800a4 4 0 0 0 3.600-6L36 26V10" fill="#fff" stroke="#0f5a3c" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/><path d="M20 42c4-3 8 3 12 0s8-3 12 0l3 8a4 4 0 0 1-3.600 6H20.600A4 4 0 0 1 17 50z" fill="#2fb67c"/><circle cx="28" cy="48" r="2" fill="#fff"/><circle cx="37" cy="45" r="1.500" fill="#fff"/></symbol></svg>
+
+<div id="tw"></div>
+<div id="md"><div class="mb"><h3 id="mt"></h3><p id="mp"></p><div class="row"><button class="btn alt" id="mn">إلغاء</button><button class="btn end" id="my">تأكيد</button></div></div></div>
+
+<div id="login"><div class="lcard"><svg class="fl"><use href="#fl"/></svg><h2 class="puff">دخول التسجيل اليدوي</h2><input id="em" type="email" placeholder="البريد الإلكتروني أو كود التعيين"><input id="pw" type="password" placeholder="كلمة المرور"><button class="btn" id="lb" style="width:100%">دخول</button></div></div>
+
+<div id="app">
+<aside>
+ <div class="brand"><svg><use href="#fl"/></svg><div><b class="puff" style="text-shadow:none">Chemistry</b><small>Academic System</small></div></div>
+ <div class="nav">
+  <a class="on"><svg viewBox="0 0 24 24"><circle cx="9" cy="8" r="4"/><path d="M2 21v-1a6 6 0 0 1 6-6h2a6 6 0 0 1 6 6v1M19 8v6M16 11h6"/></svg>التسجيل اليدوي</a>
+  <a id="openLive"><svg viewBox="0 0 24 24"><rect x="6" y="2" width="12" height="20" rx="3"/><path d="M11 18h2"/></svg>شاشة آخر اسم</a>
+  <a id="copyLive"><svg viewBox="0 0 24 24"><rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h8"/></svg>نسخ رابط الشاشة</a>
+ </div>
+ <div class="sst"><div class="w" id="sW"><b id="sS">0</b><span>مسجّلون في هذه الجلسة</span></div><div><b id="sM">0</b><span>طلاب</span></div><div><b id="sF">0</b><span>طالبات</span></div><div class="w"><b id="sT">0</b><span>إجمالي الطلاب في النظام</span></div></div>
+ <svg class="mol" viewBox="0 0 260 220" fill="none" stroke="#7ed957" stroke-width="1.6"><circle cx="70" cy="150" r="46"/><circle cx="170" cy="70" r="22"/><circle cx="196" cy="170" r="30"/><path d="M104 118l46-34M112 182l56-4"/><circle cx="70" cy="150" r="10" fill="#2fb67c" stroke="none"/><circle cx="170" cy="70" r="7" fill="#7ed957" stroke="none"/><circle cx="196" cy="170" r="9" fill="#3dcc8f" stroke="none"/></svg>
+ <div class="foot"><div class="me"><span id="who"></span></div><button id="out">خروج</button><div>قسم الكيمياء — كلية التربية — جامعة عين شمس</div></div>
+</aside>
+
+<main>
+ <div class="banner"><div><h1 class="puff">تسجيل طالب جديد</h1><p>اكتب الاسم رباعيًا ثم اضغط <b>+</b> لطالب أو <b>−</b> لطالبة، وبعدها <b>Enter</b>.</p></div>
+  <svg viewBox="0 0 150 120"><path d="M75 8L18 34l57 26 57-26z" fill="#0f5a3c"/><path d="M38 46v22c0 8 17 16 37 16s37-8 37-16V46L75 60z" fill="#1d7a52"/><path d="M132 36v34" stroke="#e6b422" stroke-width="3"/><circle cx="132" cy="74" r="5" fill="#e6b422"/><path d="M106 86h14M110 86v14l-12 14a3 3 0 0 0 2.500 5h24a3 3 0 0 0 2.500-5L114 100V86" fill="#fff" stroke="#2fb67c" stroke-width="2.500" stroke-linejoin="round"/><path d="M99 112c5-3 8 3 12 0s7-2 11 0l2 5H98z" fill="#7ed957"/></svg></div>
+
+ <div class="card nbox">
+  <h3>بيانات الطالب</h3>
+  <input id="nm" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="اكتب الاسم الرباعي هنا...">
+  <div class="stl" id="stl">اكتب الاسم الرباعي</div>
+  <div class="gs">
+   <button type="button" class="gb m" id="gm"><span class="pic" id="pm"></span><span><b>طالب</b><small>اضغط <kbd>+</kbd></small></span></button>
+   <button type="button" class="gb f" id="gf"><span class="pic" id="pf"></span><span><b>طالبة</b><small>اضغط <kbd>−</kbd></small></span></button>
+  </div>
+  <div class="hints"><span><kbd>+</kbd> طالب</span><span><kbd>−</kbd> طالبة</span><span><kbd>Enter</kbd> تسجيل</span><span><kbd>Esc</kbd> مسح</span></div>
+  <div class="acts"><button class="btn" id="reg"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>تسجيل (Enter)</button><button class="btn end" id="end"><svg viewBox="0 0 24 24"><path d="M12 3v12m0 0-4-4m4 4 4-4M4 21h16"/></svg>انتهاء جلسة التسجيل</button></div>
+ </div>
+
+ <div class="card"><div class="lh"><h3>المسجلون في هذه الجلسة</h3><span class="chip" id="cnt">0 اسم</span></div><div id="list"></div></div>
+</main></div>
+
+<script type="module">
+import {initializeApp} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import {getDatabase,ref,get,update,onValue} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+import {getAuth,signInWithEmailAndPassword,onAuthStateChanged,signOut} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+const app=initializeApp({apiKey:"AIzaSyAP1msrZV3LO2OV5bGAV9bUAiS40WGqft0",authDomain:"umsainsahmsedu.firebaseapp.com",databaseURL:"https://umsainsahmsedu-default-rtdb.firebaseio.com",projectId:"umsainsahmsedu",storageBucket:"umsainsahmsedu.firebasestorage.app",messagingSenderId:"59345980641",appId:"1:59345980641:web:135c5cb4bb372f1024bba0"});
+const db=getDatabase(app),auth=getAuth(app),$=s=>document.querySelector(s);
+const esc=s=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const norm=s=>s.normalize('NFKC').replace(/[\u064B-\u0652\u0640]/g,'').replace(/[أإآ]/g,'ا').replace(/ى/g,'ي').replace(/ة/g,'ه').replace(/ؤ/g,'و').replace(/ئ/g,'ي').replace(/[.#$\[\]\/]/g,'').replace(/\s+/g,'');
+const clean=s=>String(s||'').normalize('NFKC').replace(/[\u064B-\u065F\u0670\u0640]/g,'').replace(/[\u060C\u061B\u061F\u0660-\u0669\u066A-\u066D\u06D4\u06F0-\u06F9]/g,' ').replace(/[^\u0600-\u06FFa-zA-Z\s]/g,' ').replace(/\s+/g,' ').trim();
+const SUPER=['alzoz@gmail.com','boda2027@gmail.com'];
+
+/* ---------- vector avatars ---------- */
+const SK=['#f4c7a1','#e8b48a','#d99b73','#f7d3b5'],BM=['#d6e8f7','#d9f3e4','#fde9c9','#e3dcf7'],BF=['#f3dcea','#e4f1ff','#fdeacc','#d8f2ec'],HJ=['#c3568b','#6c5bd6','#1f9d68','#e08a2e','#2a7de1','#8a4fb5'],TI=['#2fb67c','#2a7de1','#e0558f','#e6b422'],HC=['#3a2a22','#1f1a17','#5a3b26','#2a2f4a'];
+const hs=s=>{let h=7;for(const c of String(s))h=(h*31+c.charCodeAt(0))>>>0;return h};
+const eyes=y=>`<circle cx="25.5" cy="${y}" r="1.6" fill="#26324a"/><circle cx="38.5" cy="${y}" r="1.6" fill="#26324a"/><circle cx="26" cy="${y-.5}" r=".55" fill="#fff"/><circle cx="39" cy="${y-.5}" r=".55" fill="#fff"/>`;
+const glasses=y=>`<g fill="#bfe4ff" fill-opacity=".55" stroke="#33445e" stroke-width="1.5"><rect x="20.5" y="${y-3.8}" width="10" height="7.6" rx="3.6"/><rect x="33.5" y="${y-3.8}" width="10" height="7.6" rx="3.6"/></g><path d="M30.5 ${y}h3" stroke="#33445e" stroke-width="1.5"/>`;
+function avatar(g,seed){const h=hs(seed),sk=SK[h%4];
+ if(g==='f'){const bg=BF[(h>>2)%4],hj=HJ[(h>>4)%6],gl=(h>>8)%3===0;
+  return `<svg class="av" viewBox="0 0 64 64"><circle cx="32" cy="32" r="32" fill="${bg}"/><path d="M4 64c1-12 10-17 28-17s27 5 28 17z" fill="#fff"/><path d="M13 36C13 20 21 9 32 9s19 11 19 27c0 8-2 14-4 16-5 3-9 4-15 4s-10-1-15-4c-2-2-4-8-4-16z" fill="${hj}"/><path d="M13 36C13 20 21 9 32 9s19 11 19 27" fill="none" stroke="#000" stroke-opacity=".12" stroke-width="2"/><ellipse cx="32" cy="31" rx="10.5" ry="12" fill="${sk}"/><path d="M21.500 27c1-6 5.500-9 10.500-9s9.500 3 10.500 9c-3-3-6.500-4.500-10.500-4.500S24.500 24 21.500 27z" fill="${hj}"/>${eyes(31)}${gl?glasses(31):''}<path d="M28.500 37q3.500 2.800 7 0" fill="none" stroke="#a5614a" stroke-width="1.500" stroke-linecap="round"/><circle cx="23" cy="35" r="2.200" fill="#f28fb0" opacity=".45"/><circle cx="41" cy="35" r="2.200" fill="#f28fb0" opacity=".45"/><path d="M24 48l8 9 8-9" fill="none" stroke="#c9d4e2" stroke-width="2" stroke-linejoin="round"/></svg>`}
+ const bg=BM[(h>>2)%4],hc=HC[(h>>4)%4],ti=TI[(h>>6)%4],gl=(h>>8)%2===0,st=(h>>9)%2,
+ hair=st?'M19 27c-2-11 4-18 13-18s15 7 13 18c-1-4-3-7-6-8-4 3-12 3-15 0-3 1-4 4-5 8z':'M19.500 25c-1-9 5-15 12.500-15s13.500 6 12.500 15c-2-3.500-5-5.500-12.500-5.500S21.500 21.500 19.500 25z';
+ return `<svg class="av" viewBox="0 0 64 64"><circle cx="32" cy="32" r="32" fill="${bg}"/><path d="M4 64c1-14 12-21 28-21s27 7 28 21z" fill="#fff"/><path d="M24 44l8 13 8-13" fill="none" stroke="#c9d4e2" stroke-width="2" stroke-linejoin="round"/><path d="M27 43.500l5 8 5-8z" fill="${ti}"/><rect x="27" y="35" width="10" height="9" rx="3" fill="${sk}"/><rect x="27" y="35" width="10" height="9" rx="3" fill="#000" opacity=".08"/><circle cx="32" cy="27" r="12" fill="${sk}"/><path d="${hair}" fill="${hc}"/>${eyes(27.500)}${gl?glasses(27.500):''}<path d="M28.500 34q3.500 2.800 7 0" fill="none" stroke="#a5614a" stroke-width="1.500" stroke-linecap="round"/><circle cx="22.500" cy="32" r="2" fill="#f28fb0" opacity=".35"/><circle cx="41.500" cy="32" r="2" fill="#f28fb0" opacity=".35"/></svg>`}
+$('#pm').innerHTML=avatar('m','boy-a');$('#pf').innerHTML=avatar('f','girl-b');
+
+/* ---------- ui helpers ---------- */
+let AC;const beep=(f,d,t=0)=>{try{AC=AC||new AudioContext();const o=AC.createOscillator(),g=AC.createGain();o.type='sine';o.frequency.value=f;g.gain.value=.07;o.connect(g);g.connect(AC.destination);o.start(AC.currentTime+t);o.stop(AC.currentTime+t+d)}catch(_){}};
+const sfx=k=>k==='ok'?(beep(660,.11),beep(880,.16,.11)):beep(180,.28);
+const toast=(k,t,x)=>{const e=document.createElement('div');e.className='ts '+(k||'');e.innerHTML=`<b>${esc(t)}</b>${x?`<span>${esc(x)}</span>`:''}`;$('#tw').appendChild(e);setTimeout(()=>e.remove(),3200)};
+const confirmBox=(t,p,ok)=>new Promise(r=>{$('#mt').textContent=t;$('#mp').textContent=p;$('#my').textContent=ok||'تأكيد';$('#md').classList.add('on');const d=v=>{$('#md').classList.remove('on');r(v)};$('#my').onclick=()=>d(true);$('#mn').onclick=()=>d(false)});
+const hm=t=>new Date(t).toLocaleTimeString('ar-EG-u-nu-latn',{timeZone:'Africa/Cairo',hour:'numeric',minute:'2-digit'});
+
+/* ---------- auth ---------- */
+$('#lb').onclick=async()=>{const b=$('#lb');b.disabled=true;try{let e=$('#em').value.trim(),p=$('#pw').value;if(e&&!e.includes('@')){p=p||e;e=e.toLowerCase()+'@leader.chem'}await signInWithEmailAndPassword(auth,e,p)}catch(_){toast('err','تعذر الدخول','تحقق من البريد وكلمة المرور.')}b.disabled=false};
+$('#pw').addEventListener('keydown',e=>{if(e.key==='Enter')$('#lb').click()});
+$('#out').onclick=()=>signOut(auth);
+let S={},SID=localStorage.getItem('regSid')||String(Date.now()),ROLE='',subbed=false,G='',busy=false,lastKey='';localStorage.setItem('regSid',SID);
+const gate=async u=>{let ok=SUPER.includes((u.email||'').toLowerCase());if(ok)ROLE='super';else{try{const l=(await get(ref(db,'leaders/'+u.uid))).val();if(l&&l.active===true){ROLE='leader';ok=true}}catch(_){}}
+ if(!ok){await signOut(auth);toast('err','غير مصرح لك بالدخول','هذا الحساب ليس إدارة أو ليدر نشط.')}return ok};
+onAuthStateChanged(auth,async u=>{
+ if(!u){$('#login').style.display='grid';$('#app').classList.remove('on');return}
+ if(!(await gate(u)))return;
+ $('#login').style.display='none';$('#app').classList.add('on');$('#who').textContent=u.email||'';$('#nm').focus();
+ if(subbed)return;subbed=true;
+ onValue(ref(db,'students'),s=>{S=s.val()||{};render();check()},e=>toast('err','تعذر قراءة الطلاب',String(e.message||e).slice(0,80)))});
+
+/* ---------- logic ---------- */
+const sessionList=()=>Object.entries(S).filter(([,s])=>s&&s.sid===SID).sort((a,b)=>(a[1].createdAt||0)-(b[1].createdAt||0));
+const setG=g=>{G=g;$('#gm').classList.toggle('on',g==='m');$('#gf').classList.toggle('on',g==='f');check()};
+$('#gm').onclick=()=>{setG('m');$('#nm').focus()};$('#gf').onclick=()=>{setG('f');$('#nm').focus()};
+function check(){const inp=$('#nm'),n=clean(inp.value),w=n?n.split(' ').length:0,st=$('#stl');inp.classList.remove('dup','good');st.className='stl';
+ if(!n){st.textContent='اكتب الاسم الرباعي';return}
+ if(S[norm(n)]){inp.classList.add('dup');st.classList.add('bad');st.textContent='⛔ هذا الاسم مسجّل مسبقًا — لا يمكن تكراره';return}
+ if(w<4){st.textContent=`${w} / 4 كلمات — أكمل الاسم الرباعي`;return}
+ inp.classList.add('good');st.classList.add('ok');st.textContent=G?`✔ جاهز (${G==='m'?'طالب':'طالبة'}) — اضغط Enter للتسجيل`:'✔ الاسم جاهز — اضغط + للطالب أو − للطالبة';}
+$('#nm').addEventListener('input',e=>{const v=e.target.value,m=v.match(/[+\-−–]/g);if(m){setG(m[m.length-1]==='+'?'m':'f');e.target.value=v.replace(/[+\-−–]/g,'')}check()});
+document.addEventListener('keydown',e=>{if(!$('#app').classList.contains('on')||$('#md').classList.contains('on'))return;
+ if((e.key==='+'||e.key==='-')&&!e.ctrlKey&&!e.metaKey){e.preventDefault();setG(e.key==='+'?'m':'f');$('#nm').focus()}
+ else if(e.key==='Enter'&&document.activeElement===$('#nm')){e.preventDefault();submit()}
+ else if(e.key==='Escape'){$('#nm').value='';setG('');$('#nm').focus()}});
+const shake=()=>{const i=$('#nm');i.classList.remove('shake');void i.offsetWidth;i.classList.add('shake')};
+async function submit(){if(busy)return;const name=clean($('#nm').value),w=name?name.split(' ').length:0;
+ if(w<4||name.length<8||name.length>80){shake();sfx('err');return toast('warn','الاسم غير مكتمل','اكتب الاسم رباعيًا على الأقل بحروف فقط.')}
+ if(!G){shake();sfx('err');return toast('warn','حدد النوع','اضغط + للطالب أو − للطالبة.')}
+ const k=norm(name);if(S[k]){shake();sfx('err');return toast('err','الاسم مسجّل مسبقًا','لا يمكن تكرار الأسماء.')}
+ busy=true;
+ try{let ex=false;try{ex=(await get(ref(db,'regIndex/'+k))).exists()}catch(_){}if(ex)throw {dup:1};
+  const at=Date.now(),n=sessionList().length+1;
+  await update(ref(db),{['students/'+k]:{name,gender:G,createdAt:at,sid:SID,by:'manual'},['regIndex/'+k]:true,'regLive/last':{name,gender:G,at,n,k},'regLive/state':{active:true,sid:SID,at}});
+  sfx('ok');toast('',`تم تسجيل ${G==='m'?'الطالب':'الطالبة'}`,name);$('#nm').value='';setG('');
+ }catch(e){let dup=!!e.dup;if(!dup){try{dup=(await get(ref(db,'regIndex/'+k))).exists()}catch(_){}}
+  shake();sfx('err');dup?toast('err','الاسم مسجّل مسبقًا','لا يمكن تكرار الأسماء.'):toast('err','تعذر الحفظ','تأكد من نشر قواعد قاعدة البيانات (regLive) وأن التسجيل مفتوح.')}
+ busy=false;$('#nm').focus()}
+$('#reg').onclick=submit;
+
+function render(){const all=Object.values(S),ses=sessionList(),m=ses.filter(([,s])=>s.gender!=='f').length;
+ const setN=(id,v)=>{const e=$(id);if(e.textContent!=String(v)){e.textContent=v;const p=e.parentElement;p.classList.remove('bump');void p.offsetWidth;p.classList.add('bump')}};
+ setN('#sS',ses.length);setN('#sM',m);setN('#sF',ses.length-m);setN('#sT',all.length);$('#cnt').textContent=ses.length+' اسم';
+ const L=$('#list'),newest=ses.length?ses[ses.length-1][0]:'';
+ L.innerHTML=ses.map(([k,s],i)=>`<div class="r${k===newest&&k!==lastKey&&lastKey!==''?' new':''}"><span class="n">${i+1}</span><span class="p">${avatar(s.gender==='f'?'f':'m',k)}</span><span class="nm">${esc(s.name)}</span><span class="tg ${s.gender==='f'?'f':'m'}">${s.gender==='f'?'طالبة':'طالب'}</span><span class="t">${hm(s.createdAt||0)}</span>${ROLE==='super'?`<button class="x" data-del="${k}" title="حذف">×</button>`:''}</div>`).join('')||'<div class="empty">لم يتم تسجيل أي اسم في هذه الجلسة بعد.</div>';
+ if(newest!==lastKey){lastKey=newest;L.scrollTop=L.scrollHeight}}
+document.addEventListener('click',async e=>{const b=e.target.closest('[data-del]');if(!b)return;const k=b.dataset.del,s=S[k];if(!s)return;
+ if(!await confirmBox('حذف هذا الاسم؟',s.name,'حذف'))return;
+ const ses=sessionList(),isLast=ses.length&&ses[ses.length-1][0]===k,rest=ses.filter(([x])=>x!==k),prev=rest[rest.length-1],up={['students/'+k]:null,['regIndex/'+k]:null};
+ if(isLast)up['regLive/last']=prev?{name:prev[1].name,gender:prev[1].gender,at:prev[1].createdAt,n:rest.length,k:prev[0]}:null;
+ try{await update(ref(db),up);toast('','تم الحذف')}catch(_){toast('err','تعذر الحذف','الحذف متاح للإدارة العليا فقط.')}});
+
+/* ---------- excel + end session ---------- */
+async function exportXlsx(list){const wb=new ExcelJS.Workbook(),ws=wb.addWorksheet('الأسماء',{views:[{rightToLeft:true,showGridLines:false}]});
+ ws.columns=[{width:7},{width:46},{width:12},{width:20}];
+ const fl=c=>({type:'pattern',pattern:'solid',fgColor:{argb:'FF'+c}}),bd={style:'thin',color:{argb:'FFC3D2E6'}},bo={top:bd,bottom:bd,left:bd,right:bd},ce={horizontal:'center',vertical:'middle'},F='Arial';
+ const band=(r,x,bg,sz,h)=>{ws.mergeCells(`A${r}:D${r}`);const c=ws.getCell('A'+r);c.value=x;c.fill=fl(bg);c.font={name:F,bold:true,size:sz,color:{argb:'FFFFFFFF'}};c.alignment=ce;ws.getRow(r).height=h};
+ band(1,'جامعة عين شمس — كلية التربية — قسم الكيمياء','0f5a3c',16,34);
+ const when=new Date().toLocaleString('ar-EG-u-nu-latn',{timeZone:'Africa/Cairo',dateStyle:'medium',timeStyle:'short'});
+ band(2,`جلسة التسجيل اليدوي — ${list.length} اسم — ${when}`,'3dcc8f',13,26);
+ const hr=ws.getRow(4);['م','الاسم الرباعي','النوع','وقت التسجيل'].forEach((v,i)=>{const c=hr.getCell(i+1);c.value=v;c.fill=fl('0f5a3c');c.font={name:F,bold:true,size:12,color:{argb:'FFFFFFFF'}};c.alignment=ce;c.border=bo});hr.height=26;
+ list.forEach(([,s],n)=>{const f=s.gender==='f',r=ws.getRow(5+n);[n+1,s.name,f?'طالبة':'طالب',hm(s.createdAt||0)].forEach((v,j)=>{const c=r.getCell(j+1);c.value=v;c.fill=fl(n%2?'FFFFFF':'F2F7FC');c.font={name:F,size:12};c.alignment=j===1?{horizontal:'right',vertical:'middle',indent:1}:ce;c.border=bo});const g=r.getCell(3);g.fill=fl(f?'FCE7F1':'E3EEFB');g.font={name:F,bold:true,size:11,color:{argb:f?'FFB03A6F':'FF0C3F63'}};r.height=24});
+ const e=list.length+6;ws.mergeCells(`A${e}:D${e}`);const fc=ws.getCell('A'+e);fc.value='تطوير زياد الدري — النظام يعمل بواسطة بودا';fc.font={name:F,italic:true,size:10,color:{argb:'FF6B7C96'}};fc.alignment=ce;
+ ws.pageSetup={paperSize:9,orientation:'portrait',fitToPage:true,fitToWidth:1,fitToHeight:0};
+ const d=new Date(),p=n=>String(n).padStart(2,'0'),a=document.createElement('a');
+ a.href=URL.createObjectURL(new Blob([await wb.xlsx.writeBuffer()],{type:'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'}));
+ a.download=`جلسة-التسجيل-${d.getFullYear()}-${p(d.getMonth()+1)}-${p(d.getDate())}-${p(d.getHours())}${p(d.getMinutes())}.xlsx`;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),5000)}
+$('#end').onclick=async()=>{const list=sessionList();
+ if(!await confirmBox('إنهاء جلسة التسجيل؟',list.length?`سيتم تنزيل ملف Excel بـ ${list.length} اسم ثم بدء جلسة جديدة.`:'لا توجد أسماء في هذه الجلسة. سيتم بدء جلسة جديدة.','إنهاء وتنزيل'))return;
+ try{if(list.length)await exportXlsx(list);
+  SID=String(Date.now());localStorage.setItem('regSid',SID);lastKey='';
+  await update(ref(db),{'regLive/last':null,'regLive/state':{active:false,at:Date.now()}});
+  render();setG('');$('#nm').value='';check();toast('','تم إنهاء الجلسة',list.length?'تم تنزيل ملف Excel وبدء جلسة جديدة.':'بدأت جلسة جديدة.')}
+ catch(er){toast('err','تعذر إنهاء الجلسة',String(er.message||er).slice(0,90))}};
+
+const liveUrl=()=>new URL('last-name.html',location.href).href;
+$('#openLive').onclick=()=>open(liveUrl(),'_blank');
+$('#copyLive').onclick=async()=>{try{await navigator.clipboard.writeText(liveUrl());toast('','تم نسخ الرابط','افتحه على الموبايل أو الشاشة.')}catch(_){prompt('انسخ الرابط:',liveUrl())}};
+</script></body></html>
